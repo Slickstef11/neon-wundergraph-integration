@@ -1,4 +1,4 @@
-import { authProviders, configureWunderGraphApplication, cors, introspect, templates } from '@wundergraph/sdk';
+import { authProviders, configureWunderGraphApplication, cors, EnvironmentVariable, introspect, templates } from '@wundergraph/sdk';
 import { NextJsTemplate } from '@wundergraph/nextjs/dist/template';
 import server from './wundergraph.server';
 import operations from './wundergraph.operations';
@@ -8,9 +8,14 @@ const spaceX = introspect.graphql({
 	url: 'https://spacex-api.fly.dev/graphql/',
 });
 
+const neon = introspect.postgresql({
+	apiNamespace: 'neon', 
+	databaseURL: new EnvironmentVariable('NEON_DATABASE_URL')
+})
+
 // configureWunderGraph emits the configuration
 configureWunderGraphApplication({
-	apis: [spaceX],
+	apis: [spaceX, neon],
 	server,
 	operations,
 	codeGenerators: [
